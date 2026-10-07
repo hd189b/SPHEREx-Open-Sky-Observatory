@@ -1,6 +1,6 @@
 # SPHEREx Open Sky Observatory
 
-A public, static HTML/CSS/JavaScript explorer. No backend, account, analytics, database or API key.
+A public HTML/CSS/JavaScript Open Sky explorer. No account, analytics, database or API key.
 
 ## Run locally
 
