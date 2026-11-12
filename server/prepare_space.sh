@@ -7,7 +7,7 @@ DEST="${1:?usage: sh server/prepare_space.sh <space-folder>}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$DEST/pipeline" "$DEST/server"
 cp "$ROOT/pipeline/build.py" "$ROOT/pipeline/s3cut.py" "$ROOT/pipeline/targets.yaml" "$ROOT/pipeline/requirements.txt" "$DEST/pipeline/"
-cp "$ROOT/server/app.py" "$ROOT/server/requirements.txt" "$DEST/server/"
+cp "$ROOT/server/app.py" "$ROOT/server/worker.py" "$ROOT/server/requirements.txt" "$DEST/server/"
 cp "$ROOT/server/Dockerfile" "$DEST/Dockerfile"
 cat > "$DEST/README.md" <<'EOF'
 ---

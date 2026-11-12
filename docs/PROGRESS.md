@@ -69,6 +69,7 @@ Update this file after every task. Plan and reasons: [PLAN.md](PLAN.md). Data fa
 - [x] R.18 AWS reader fixes: end-of-file reads, layout learned per processing version (l2b-v20/v24/v25), whole-header check, 8-bit data
 - [x] R.19 Sky picker: NASA maps only (2MASS default, SPHEREx DR1, AllWISE — all IRSA); map check waits 20 s, retries, says why it failed; tile loading bar ("Loading map tiles: 14 of 20")
 - [x] R.20 README rewritten (what it does, NASA vs external data, how SPHEREx is used, run/host/back up); `server/prepare_space.sh` assembles a Hugging Face Space; astroquery dropped from requirements. Docker image not test-built locally (Docker daemon not running).
+- [x] R.21 Server: builds run in separate processes (server/worker.py), up to 3 at once (TM_WORKERS) with a queue; stall timeout 4 min, total 15 min; retry starts a fresh build; builds stop with the server; archive search fails in ≈3 min instead of 20+
 - [-] R.11 Six more fast stars (Lacaille 9352, Groombridge 1830, Wolf 359, Teegarden, Luhman 16, van Maanen) — dropped to save downloads; available through the live builder
 
 ## P3 — Deep time + Gaia (signature feature)
@@ -111,6 +112,7 @@ Update this file after every task. Plan and reasons: [PLAN.md](PLAN.md). Data fa
 ## Session log
 | Date | Session summary |
 |---|---|
+| 2026-11-13 | Search looked broken: one build was stuck on IRSA's archive search and blocked the single-lane queue → parallel builds + timeouts; tested timeout, retry and 2 builds at once. |
 | 2026-11-13 | WASP-17b search: worked but nothing was marked (treated as a sky field) → named objects always marked; AWS reader layout bug fixed (8 files in 33 s); Downloads rows expand to show steps. |
 | 2026-11-13 | Progressive loading + loading card + Downloads panel; SPHEREx via AWS range reads. Network to US servers very slow from Dhaka during tests → recommend deploying the server to Hugging Face. |
 | 2026-11-12 | Redesign after user feedback; option C (prepared list + live builder server); deep time 2MASS/WISE; demo set trimmed to 8 targets because IRSA cutouts were very slow (≈4 KB/s). |

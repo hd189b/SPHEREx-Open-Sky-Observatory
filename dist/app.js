@@ -532,7 +532,7 @@ function track(id, name) {
     // Before anything is ready: show the plan in the build panel.
     if (!opened && !$('buildPanel').hidden) {
       $('buildBar').style.width = `${Math.max(3, sm.pct)}%`;
-      $('buildLog').innerHTML = (r.queue_position ? `<li>${r.queue_position} request(s) ahead of you…</li>` : '') +
+      $('buildLog').innerHTML = (r.queue_position ? `<li>Waiting for a free builder slot — #${r.queue_position} in line…</li>` : '') +
         (plan.length ? plan.map(planLine).join('') : (r.log || []).slice(-4).map(l => `<li>${esc(l)}</li>`).join('')) + `<li class="fine">${Math.round((Date.now() - t0) / 1000)} s</li>`;
     }
     // First date ready → open it straight away (if the user is still waiting for this place).
@@ -581,7 +581,7 @@ async function loadDetail(id) {
   try { r = await fetch(`${API}/api/fields/${id}`, { cache: 'no-store' }).then(x => x.json()); plan = r.plan || []; log = r.log || []; } catch { /* below */ }
   if (!plan.length) { try { plan = (await fetch(`${API}/data/${id}/manifest.json`, { cache: 'no-store' }).then(x => x.json())).plan || []; } catch { /* none */ } }
   const sm = planSummary(plan);
-  const html = (plan.length ? `<p class="fine">${sm.ready} of ${sm.items} parts ready${r && r.queue_position ? ` · ${r.queue_position} request(s) ahead` : ''}${r && r.elapsed_s ? ` · ${Math.round(r.elapsed_s)} s` : ''}</p><ul class="plan">${plan.map(planLine).join('')}</ul>` : '<p class="fine">No step details were kept for this build.</p>')
+  const html = (plan.length ? `<p class="fine">${sm.ready} of ${sm.items} parts ready${r && r.queue_position ? ` · #${r.queue_position} in line` : ''}${r && r.elapsed_s ? ` · ${Math.round(r.elapsed_s)} s` : ''}</p><ul class="plan">${plan.map(planLine).join('')}</ul>` : '<p class="fine">No step details were kept for this build.</p>')
     + (log.length ? `<details><summary>Server messages</summary><pre>${log.map(esc).join('\n')}</pre></details>` : '')
     + (r && r.error ? `<p class="err">${esc(r.error)}</p>` : '');
   dlDetail.set(id, html);

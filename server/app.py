@@ -12,11 +12,16 @@ Endpoints
   GET  /api/fields/{id}                    → status, progress lines, queue position, error
   GET  /data/{id}/…                        → built manifest.json and frames
 
+Several builds run at the same time (TM_WORKERS, default 3), each in its own process. A build is stopped
+when it makes no progress for TM_STALL_S seconds (default 240) or runs longer than TM_TIMEOUT_S (default 900);
+its slot is freed and asking for the same place again starts a fresh build (downloads already made are reused).
+
 Run locally:  pipeline/.venv/bin/uvicorn server.app:app --port 7860
 """
 from __future__ import annotations
 
 import json
+import multiprocessing as mp
 import os
 import queue
 import re
@@ -43,6 +48,9 @@ DATA = Path(os.environ.get("TM_DATA_DIR", ROOT / "data"))
 CACHE = Path(os.environ.get("TM_CACHE_DIR", ROOT / "cache"))
 MAX_QUEUE = int(os.environ.get("TM_MAX_QUEUE", "8"))
 KEEP_CUTOUTS = os.environ.get("TM_KEEP_CUTOUTS", "0") == "1"
+WORKERS = int(os.environ.get("TM_WORKERS", "3"))         # builds running at the same time
+STALL_S = int(os.environ.get("TM_STALL_S", "240"))       # stop a build with no progress for this long
+TIMEOUT_S = int(os.environ.get("TM_TIMEOUT_S", "900"))   # stop a build running longer than this
 DATA.mkdir(parents=True, exist_ok=True)
 CACHE.mkdir(parents=True, exist_ok=True)
 build.OUT, build.CACHE = DATA, CACHE
@@ -56,8 +64,9 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "P
 app.mount("/data", StaticFiles(directory=DATA), name="data")
 
 jobs: dict[str, dict] = {}
-work: "queue.Queue[str]" = queue.Queue()
+pending: list[str] = []          # job ids waiting for a free slot, oldest first
 lock = threading.Lock()
+CTX = mp.get_context("spawn")    # fresh interpreter per build (no shared state, safe to stop)
 
 
 def field_id(ra: float, dec: float, fov: float) -> str:
@@ -104,49 +113,94 @@ def planet_note(label: str, star: dict) -> str:
             "marks its host star. ") if planet else ""
 
 
-def run_job(jid: str):
+def _dur(sec: int) -> str:
+    return f"{sec // 60} minutes" if sec >= 120 else f"{sec} seconds"
+
+
+def _finish(jid: str, status: str, **kw):
     job = jobs[jid]
-    job.update(status="running", started=time.time())
-
-    def hook(msg: str):
-        with lock:
-            job["log"] = (job["log"] + [msg])[-30:]
-
-    def plan_hook(plan: list):
-        with lock:
-            job["plan"] = plan
-    build.LOG_HOOK, build.PLAN_HOOK = hook, plan_hook
-    try:
-        t = job["target"]
-        m = build.build_target(t, DEFAULTS, refresh=False, workers=8)
-        if not m["frames"]:
-            raise RuntimeError("SPHEREx has not observed this position yet (no usable images).")
-        job.update(status="done", manifest=f"/data/{jid}/manifest.json", frames=len(m["frames"]))
-    except Exception as e:  # noqa: BLE001
-        traceback.print_exc()
-        job.update(status="error", error=str(e) or e.__class__.__name__)
-    finally:
-        build.LOG_HOOK = build.PLAN_HOOK = None
-        job["finished"] = time.time()
-        if not KEEP_CUTOUTS:
-            shutil.rmtree(CACHE / jid / "cutouts", ignore_errors=True)
+    job.update(status=status, finished=time.time(), **kw)
+    proc = job.pop("_proc", None)
+    job.pop("_q", None)
+    if proc is not None and proc.is_alive():
+        proc.terminate()
+        proc.join(5)
+        if proc.is_alive():
+            proc.kill()
+    if status == "done" and not KEEP_CUTOUTS:
+        shutil.rmtree(CACHE / jid / "cutouts", ignore_errors=True)  # kept after errors so a retry is faster
 
 
-def worker():
+def _start(jid: str):
+    job = jobs[jid]
+    q = CTX.Queue()
+    from server import worker  # noqa: PLC0415
+    proc = CTX.Process(target=worker.run, args=(job["target"], DEFAULTS, str(DATA), str(CACHE), q), daemon=True)
+    proc.start()
+    now = time.time()
+    job.update(status="running", started=now, last_progress=now, _proc=proc, _q=q)
+    job["log"] = job["log"][-20:] + ["Started."]
+
+
+def scheduler():
+    """Start waiting builds when a slot is free, collect progress, stop stalled or too-long builds."""
     while True:
-        jid = work.get()
-        try:
-            run_job(jid)
-        finally:
-            work.task_done()
+        time.sleep(0.5)
+        with lock:
+            running = [j for j, v in jobs.items() if v["status"] == "running"]
+            while pending and len(running) < WORKERS:
+                jid = pending.pop(0)
+                _start(jid)
+                running.append(jid)
+            now = time.time()
+            for jid in running:
+                job = jobs[jid]
+                q, proc = job.get("_q"), job.get("_proc")
+                try:
+                    while True:
+                        kind, val = q.get_nowait()
+                        job["last_progress"] = now
+                        if kind == "log":
+                            job["log"] = (job["log"] + [val])[-30:]
+                        elif kind == "plan":
+                            job["plan"] = val
+                        elif kind == "done":
+                            _finish(jid, "done", frames=val, manifest=f"/data/{jid}/manifest.json")
+                            break
+                        elif kind == "error":
+                            _finish(jid, "error", error=val)
+                            break
+                except (queue.Empty, OSError, ValueError, AttributeError):
+                    pass
+                if job["status"] != "running":
+                    continue
+                if proc is not None and not proc.is_alive():
+                    _finish(jid, "error", error="The build stopped unexpectedly. Please try again.")
+                elif now - job["last_progress"] > STALL_S:
+                    _finish(jid, "error", error=f"Timed out: no progress for {_dur(STALL_S)} "
+                            "(NASA's archive is not responding). Search again to retry.")
+                elif now - job["started"] > TIMEOUT_S:
+                    _finish(jid, "error", error=f"Timed out after {_dur(TIMEOUT_S)}. "
+                            "Search again to retry — files already downloaded are reused.")
 
 
-threading.Thread(target=worker, daemon=True).start()
+threading.Thread(target=scheduler, daemon=True).start()
+
+
+@app.on_event("shutdown")
+def stop_builds():
+    """Stop every running build when the server stops."""
+    with lock:
+        for jid, job in jobs.items():
+            if job["status"] == "running":
+                _finish(jid, "error", error="The server was restarted. Search again to retry.")
 
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "queue": work.qsize(), "version": app.version}
+    with lock:
+        running = sum(v["status"] == "running" for v in jobs.values())
+    return {"ok": True, "running": running, "queue": len(pending), "workers": WORKERS, "version": app.version}
 
 
 @app.get("/api/resolve")
@@ -168,7 +222,7 @@ def api_fields(ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=
         if jid in jobs and jobs[jid]["status"] in ("queued", "running"):
             return {"status": jobs[jid]["status"], "id": jid,
                     "manifest": f"/data/{jid}/manifest.json" if manifest_state(jid) else None}
-        if work.qsize() >= MAX_QUEUE:
+        if len(pending) >= MAX_QUEUE:
             raise HTTPException(503, "The builder is busy. Please try again in a few minutes.")
         label = (name or "").strip()
         star = resolve(label) if label else None
@@ -189,8 +243,8 @@ def api_fields(ra: float = Query(..., ge=0, lt=360), dec: float = Query(..., ge=
             target["simbad"] = label
         else:
             target.update(ra=ra, dec=dec)
-        jobs[jid] = {"status": "queued", "target": target, "log": ["Waiting in queue…"], "created": time.time()}
-        work.put(jid)
+        jobs[jid] = {"status": "queued", "target": target, "log": ["Waiting for a free builder slot…"], "created": time.time()}
+        pending.append(jid)
     return {"status": "queued", "id": jid}
 
 
@@ -202,7 +256,8 @@ def api_field_status(jid: str):
         return {"status": "done", "id": jid, "manifest": f"/data/{jid}/manifest.json"}
     if not job:
         raise HTTPException(404, "Unknown request.")
-    ahead = list(work.queue).index(jid) if jid in work.queue else 0
+    with lock:
+        ahead = pending.index(jid) + 1 if jid in pending else 0
     return {k: job.get(k) for k in ("status", "error", "frames")} | {
         "id": jid, "name": job["target"]["name"], "log": job["log"][-8:], "queue_position": ahead,
         "manifest": f"/data/{jid}/manifest.json" if state else None, "partial": state == "partial",
@@ -220,7 +275,7 @@ def api_jobs():
         seen.add(jid)
         started = job.get("started")
         out.append({"id": jid, "name": job["target"]["name"], "status": job["status"], "error": job.get("error"),
-                    "queue_position": list(work.queue).index(jid) if jid in work.queue else 0,
+                    "queue_position": pending.index(jid) + 1 if jid in pending else 0,
                     "manifest": f"/data/{jid}/manifest.json" if manifest_state(jid) else None,
                     "progress": summary(job.get("plan")), "frames": job.get("frames"),
                     "elapsed_s": round((job.get("finished") or time.time()) - started, 1) if started else 0,

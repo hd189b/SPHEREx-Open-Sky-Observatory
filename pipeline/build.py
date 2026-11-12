@@ -186,8 +186,12 @@ def sia_images(ra: float, dec: float, tid: str, refresh: bool) -> list[dict]:
     def fetch():
         rows = []
         for c in COLLECTIONS:
-            data = get(f"{IRSA}/SIA", params={
-                "COLLECTION": c, "POS": f"CIRCLE {ra} {dec} 0.002", "MAXREC": 20000})
+            try:  # fail within ~3 minutes instead of blocking the builder for 20+ minutes
+                data = get(f"{IRSA}/SIA", params={
+                    "COLLECTION": c, "POS": f"CIRCLE {ra} {dec} 0.002", "MAXREC": 20000}, timeout=60, tries=3)
+            except RuntimeError as e:
+                raise RuntimeError("NASA's archive (IRSA) did not respond to the image search. "
+                                   "Please try again in a few minutes.") from e
             for r in votable_rows(data):
                 rows.append({
                     "did": r["obs_publisher_did"], "obs_id": r["obs_id"], "collection": c,

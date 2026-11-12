@@ -11,7 +11,7 @@ COPY server/requirements.txt server/requirements.txt
 RUN pip install --no-cache-dir -r server/requirements.txt
 
 COPY pipeline/build.py pipeline/s3cut.py pipeline/targets.yaml pipeline/
-COPY server/app.py server/
+COPY server/app.py server/worker.py server/
 RUN mkdir -p /tmp/tm && chown -R app /tmp/tm
 USER app
 
