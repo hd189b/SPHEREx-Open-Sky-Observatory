@@ -1,0 +1,133 @@
+{
+ "generated_utc": "2026-11-12T18:08:39+00:00",
+ "targets": [
+  {
+   "id": "barnard",
+   "name": "Barnard's Star",
+   "kind": "star",
+   "blurb": "The fastest-moving star in our sky (about 10.4 arcseconds per year), 6 light-years away. SPHEREx sees it shift by 1\u20132 pixels between 2025 and 2026.",
+   "center": [
+    269.449076,
+    4.732029
+   ],
+   "frames": 24,
+   "first_utc": "2000-05-28T10:17:36Z",
+   "last_utc": "2026-08-31T09:10:03Z",
+   "thumbnail": "barnard/frames/d2_002.webp",
+   "manifest": "barnard/manifest.json",
+   "group": "Challenge test targets"
+  },
+  {
+   "id": "eps-indi-b",
+   "name": "Epsilon Indi B",
+   "kind": "star",
+   "blurb": "A pair of brown dwarfs orbiting the star Epsilon Indi, 12 light-years away. Brown dwarfs are too small to shine like stars but glow in the infrared.",
+   "center": [
+    331.071268,
+    -56.792048
+   ],
+   "frames": 24,
+   "first_utc": "1999-11-08T02:42:31Z",
+   "last_utc": "2026-09-30T14:23:32Z",
+   "thumbnail": "eps-indi-b/frames/d2_003.webp",
+   "manifest": "eps-indi-b/manifest.json",
+   "group": "Challenge test targets"
+  },
+  {
+   "id": "wise-0855",
+   "name": "WISE 0855\u22120714",
+   "kind": "star",
+   "blurb": "The coldest brown dwarf known, about 7 light-years away. It is extremely faint at short wavelengths and is expected to show up only in SPHEREx's longest-wavelength detectors.",
+   "center": [
+    133.788353,
+    -7.244536
+   ],
+   "frames": 24,
+   "first_utc": "1998-12-28T07:59:33Z",
+   "last_utc": "2026-05-05T08:57:57Z",
+   "thumbnail": "wise-0855/frames/d5_003.webp",
+   "manifest": "wise-0855/manifest.json",
+   "group": "Challenge test targets"
+  },
+  {
+   "id": "rw-aur",
+   "name": "RW Aurigae",
+   "kind": "variable",
+   "blurb": "A young star system whose brightness changes irregularly, partly because dust passes in front of it.",
+   "center": [
+    76.956589,
+    30.401286
+   ],
+   "frames": 16,
+   "first_utc": "2025-09-03T01:41:32Z",
+   "last_utc": "2026-09-15T02:34:53Z",
+   "thumbnail": "rw-aur/frames/d3_002.webp",
+   "manifest": "rw-aur/manifest.json",
+   "group": "Challenge test targets"
+  },
+  {
+   "id": "r-dra",
+   "name": "R Draconis",
+   "kind": "variable",
+   "blurb": "A Mira-type pulsating giant star that brightens and fades over about 245 days.",
+   "center": [
+    248.167221,
+    66.755025
+   ],
+   "frames": 18,
+   "first_utc": "2025-06-01T08:03:07Z",
+   "last_utc": "2026-07-11T14:23:33Z",
+   "thumbnail": "r-dra/frames/d3_p02.webp",
+   "manifest": "r-dra/manifest.json",
+   "group": "Challenge test targets"
+  },
+  {
+   "id": "proxima",
+   "name": "Proxima Centauri",
+   "kind": "star",
+   "blurb": "The closest star to the Sun (4.2 light-years), a small red dwarf with planets. It moves about 3.9\u2033 per year.",
+   "center": [
+    217.398199,
+    -62.676619
+   ],
+   "frames": 22,
+   "first_utc": "2000-03-12T07:54:41Z",
+   "last_utc": "2026-09-01T20:00:44Z",
+   "thumbnail": "proxima/frames/d2_003.webp",
+   "manifest": "proxima/manifest.json",
+   "group": "Fast-moving nearby stars"
+  },
+  {
+   "id": "kapteyn",
+   "name": "Kapteyn's Star",
+   "kind": "star",
+   "blurb": "An old red star 13 light-years away that orbits our galaxy the 'wrong' way. It moves about 8.7\u2033 per year \u2014 the second-fastest star.",
+   "center": [
+    77.953387,
+    -45.039734
+   ],
+   "frames": 19,
+   "first_utc": "1999-10-11T08:00:10Z",
+   "last_utc": "2026-09-02T15:52:42Z",
+   "thumbnail": "kapteyn/frames/d2_002.webp",
+   "manifest": "kapteyn/manifest.json",
+   "group": "Fast-moving nearby stars"
+  },
+  {
+   "id": "3i-atlas",
+   "name": "3I/ATLAS (Aug 2025)",
+   "kind": "comet",
+   "blurb": "The third known interstellar object. It moves across the sky within hours, so single SPHEREx exposures from one day already show it travelling past the stars. Positions are IRSA predictions, not detections.",
+   "center": [
+    248.460299,
+    -17.010726
+   ],
+   "frames": 8,
+   "first_utc": "2025-08-07T05:51:10Z",
+   "last_utc": "2025-08-07T14:05:58Z",
+   "thumbnail": "3i-atlas/frames/d3_007.webp",
+   "manifest": "3i-atlas/manifest.json",
+   "group": "Comets"
+  }
+ ]
+}

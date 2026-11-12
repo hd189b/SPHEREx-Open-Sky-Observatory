@@ -1,0 +1,121 @@
+# Prepared targets for the SPHEREx time machine.
+# Coordinates and motions come from SIMBAD at build time (see build.py).
+#
+# kind:        star     – sky-fixed grid, frames stacked per observing period × detector
+#              variable – same as star; brightness is the interesting change
+#              comet    – images listed in an IRSA moving-object table, one frame per image
+# fov_deg:     width of the square output grid (degrees)
+# deep_time:   true → grid is centred between the year-2000 and today's position, and
+#              2MASS (2000) + WISE (2010) frames are added (see defaults.deep)
+# detectors:   SPHEREx detectors to build (1–6)
+# default_detector: detector the viewer shows first
+# per_group:   max images stacked per observing period × detector
+
+defaults:
+  # Older NASA surveys added for deep_time targets: "SURVEY:BAND" (2MASS J/H/K ≈2000, WISE W1–W4 2010)
+  deep: ["2MASS:K", "WISE:W2"]
+  per_group_deep: 8
+  detectors: [1, 2, 3, 4, 5, 6]
+  per_group: 3
+  period_gap_days: 20
+  size_px: 256
+
+targets:
+  - id: barnard
+    group: Challenge test targets
+    name: "Barnard's Star"
+    simbad: "Barnard's star"
+    kind: star
+    fov_deg: 0.15
+    deep_time: true
+    default_detector: 2
+    blurb: >-
+      The fastest-moving star in our sky (about 10.4 arcseconds per year), 6 light-years away.
+      SPHEREx sees it shift by 1–2 pixels between 2025 and 2026.
+
+  - id: eps-indi-b
+    group: Challenge test targets
+    name: "Epsilon Indi B"
+    simbad: "eps Ind B"
+    kind: star
+    fov_deg: 0.12
+    deep_time: true
+    default_detector: 2
+    blurb: >-
+      A pair of brown dwarfs orbiting the star Epsilon Indi, 12 light-years away.
+      Brown dwarfs are too small to shine like stars but glow in the infrared.
+
+  - id: wise-0855
+    group: Challenge test targets
+    name: "WISE 0855−0714"
+    simbad: "WISE J085510.83-071442.5"
+    kind: star
+    fov_deg: 0.10
+    deep_time: true
+    default_detector: 5
+    per_group: 4
+    blurb: >-
+      The coldest brown dwarf known, about 7 light-years away. It is extremely faint
+      at short wavelengths and is expected to show up only in SPHEREx's longest-wavelength detectors.
+
+  - id: rw-aur
+    group: Challenge test targets
+    name: "RW Aurigae"
+    simbad: "RW Aur"
+    kind: variable
+    fov_deg: 0.10
+    deep_time: false
+    default_detector: 3
+    blurb: >-
+      A young star system whose brightness changes irregularly, partly because dust
+      passes in front of it.
+
+  - id: r-dra
+    group: Challenge test targets
+    name: "R Draconis"
+    simbad: "R Dra"
+    kind: variable
+    fov_deg: 0.10
+    deep_time: false
+    default_detector: 3
+    blurb: >-
+      A Mira-type pulsating giant star that brightens and fades over about 245 days.
+
+  - id: proxima
+    group: Fast-moving nearby stars
+    name: "Proxima Centauri"
+    simbad: "Proxima Cen"
+    kind: star
+    fov_deg: 0.1
+    deep_time: true
+    default_detector: 2
+    per_group: 2
+    blurb: >-
+      The closest star to the Sun (4.2 light-years), a small red dwarf with planets. It moves about 3.9″ per year.
+
+  - id: kapteyn
+    group: Fast-moving nearby stars
+    name: "Kapteyn's Star"
+    simbad: "Kapteyn's star"
+    kind: star
+    fov_deg: 0.12
+    deep_time: true
+    default_detector: 2
+    per_group: 2
+    blurb: >-
+      An old red star 13 light-years away that orbits our galaxy the 'wrong' way. It moves about 8.7″ per year — the second-fastest star.
+
+  - id: 3i-atlas
+    group: Comets
+    name: "3I/ATLAS (Aug 2025)"
+    kind: comet
+    irsa_table: https://irsa.ipac.caltech.edu/data/SPHEREx/docs/comet3iatlas/obscore_3I_Atlas.vot
+    window_utc: ["2025-08-07T00:00:00", "2025-08-08T00:00:00"]
+    detectors: [3]
+    fov_deg: 0.45
+    size_px: 512
+    default_detector: 3
+    blurb: >-
+      The third known interstellar object. It moves across the sky within hours, so
+      single SPHEREx exposures from one day already show it travelling past the stars.
+      Positions are IRSA predictions, not detections.

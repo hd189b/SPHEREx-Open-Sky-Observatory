@@ -1,0 +1,6 @@
+astropy>=7.1
+numpy>=2.0
+pillow>=11.0
+pyyaml>=6.0
+reproject>=0.14
+requests>=2.32

@@ -1,14 +1,212 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d13"><title>SPHEREx | Open Sky Observatory</title><link rel="stylesheet" href="style.css"></head><body>
-<header><a class="brand" href="./"><span class="logo">✳</span> SPHEREx <small>OPEN SKY OBSERVATORY</small></a><nav><button class="nav active" data-view="compare">Time explorer</button><button class="nav" data-view="sky">Sky map</button><button id="about">The mission ↗</button></nav><span class="open-tag">OPEN ACCESS</span></header>
-<main><aside><div class="eyebrow">YOUR WINDOW INTO THE INFRARED</div><h1>A sky that<br>never stands still.</h1><p class="intro">Explore the sky. Look back in time.<br>See what moves between observations.</p>
-<div class="section-label">01 <span>Choose your view</span></div><button class="target selected" id="comet"><span class="target-icon">☄</span><span><strong>3I/ATLAS field</strong><small>SPHEREx · observation comparison</small></span><span>↗</span></button>
-<div id="compareControls"><div class="section-label">02 <span>Compare observations</span></div><label for="epochA">EARLIER OBSERVATION <b>A</b></label><select id="epochA"></select><label for="epochB">LATER OBSERVATION <b>B</b></label><select id="epochB"></select><div class="interval" id="interval">Loading observation metadata…</div><label>COMPARISON MODE</label><div class="segmented"><button class="active" data-mode="swipe">Swipe</button><button data-mode="blink">Blink</button><button data-mode="split">Side by side</button></div><div id="swipeControl"><label for="slider">Drag through time <span id="percent">50%</span></label><input id="slider" type="range" min="0" max="100" value="50"></div><button id="play" class="primary">▶ Play blink comparison</button><label class="check"><input id="markers" type="checkbox" checked> Show predicted comet positions</label><p class="fine">Position markers come from IRSA’s ephemeris. They are guides, not detections.</p></div>
-<div id="skyControls" hidden><div class="section-label">02 <span>Go somewhere remarkable</span></div><label for="targetSelect">SKY DESTINATION</label><select id="targetSelect"><option value="83.822 -5.391">Orion Nebula</option><option value="10.685 41.269">Andromeda Galaxy</option><option value="266.417 -29.008">Galactic Center</option><option value="56.75 24.117">Pleiades</option><option value="248.65 -18.2">3I/ATLAS observing region</option></select><label for="survey">REFERENCE SURVEY</label><select id="survey"><option value="P/2MASS/color">2MASS · near-infrared</option><option value="P/DSS2/color">DSS2 · visible light</option></select><p class="fine">These are real reference surveys, not SPHEREx epochs. Drag to pan and scroll to zoom.</p><form id="coordinates"><label>GO TO COORDINATES (DEGREES)</label><div class="coord-inputs"><input id="ra" type="number" step="any" min="0" max="360" placeholder="RA 0–360" required aria-label="Right ascension"><input id="dec" type="number" step="any" min="-90" max="90" placeholder="Dec −90–90" required aria-label="Declination"></div><button class="primary">Explore coordinates</button></form><a class="external" href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">Open the SPHEREx archive ↗</a></div>
-<div class="sidebar-bottom"><span class="mini-orbit">◎</span><p>One universe.<br><strong>Countless discoveries.</strong></p></div></aside>
-<section class="workspace"><div class="workspace-heading"><div><span class="eyebrow" id="viewEyebrow">SPHEREx / TIME DOMAIN</span><h2 id="viewTitle">Follow the change.</h2></div><span class="data-tag" id="dataTag">ARCHIVAL OBSERVATIONS</span></div>
-<div class="viewer" id="viewer"><div id="comparison"><canvas id="skyCanvas" tabindex="0" aria-label="Sky image comparison. Use plus and minus to zoom and arrow keys to pan."></canvas><div id="divider"><span>‹ ›</span></div><span class="epoch-tag left" id="tagA">A · Earlier</span><span class="epoch-tag right" id="tagB">B · Later</span><div class="north">N<br>↑</div><div class="view-tools"><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="reset" aria-label="Reset view">⌖</button></div><div class="canvas-caption" id="canvasCaption">Drag to pan · Scroll to zoom · Slide to compare</div></div><div id="aladin" hidden></div><div class="load-state" id="status" role="status">Loading real SPHEREx observations…</div></div>
-<div class="coordinates-bar"><span id="position">ICRS · fixed sky coordinates</span><span id="fieldSize">Aligned observation pair</span><span>NASA / IPAC / Caltech</span></div>
-<div class="below"><article><span class="eyebrow">A VISITOR FROM ANOTHER STAR</span><h3>Catch a comet in motion.</h3><p id="description">Two SPHEREx exposures, one patch of sky. Swipe or blink between them and inspect the predicted positions of interstellar comet 3I/ATLAS.</p></article><article class="how"><span class="eyebrow">LOOK CLOSELY</span><p><span>01</span> Stars should stay in approximately the same place.</p><p><span>02</span> Moving objects may shift against the background.</p><p><span>03</span> Noise and wavelength changes can also look like motion.</p></article></div>
-<details><summary>Data provenance & scientific limitations</summary><div id="provenance">Loading…</div><p>The comparison is a curated archival pair, not a current all-sky SPHEREx feed. Images are reprojected to the same sky grid with a shared display stretch. Detector wavelength varies across the field; brightness differences are not evidence of variability. Registration errors, noise, masks and instrumental effects can create apparent changes. No automatic planet discovery is claimed.</p><a href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/comet3iatlas/index.html" target="_blank" rel="noopener">IRSA 3I/ATLAS data and documentation ↗</a></details>
-</section></main><footer><span>Built for curious minds. No accounts. No tracking. · <a href="source.zip" download>Download source code</a></span><a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">NASA Space Apps · Planet X and SPHEREx ↗</a></footer>
-<dialog id="mission"><button id="closeDialog" aria-label="Close">×</button><span class="eyebrow">THE BIG PICTURE</span><h2>102 colours.<br>An entire sky.</h2><p>SPHEREx surveys the sky in 102 near-infrared spectral channels, investigating cosmic history, galaxies and the ingredients for life.</p><p>The NASA Space Apps Challenge brings people together to solve problems using open space and Earth-science data. “Planet X and SPHEREx” asks for a public tool that makes changes across sky images easy to explore.</p><p><strong>This independent prototype</strong> uses real SPHEREx data for the featured comparison and 2MASS/DSS2 for full-sky navigation. It is not a NASA product.</p><a class="external" href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">Read the official challenge ↗</a></dialog><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A time machine for the infrared sky: watch stars, brown dwarfs and comets move, and stars change brightness, in NASA SPHEREx images.">
+<meta name="theme-color" content="#0b0f14">
+<title>SPHEREx Time Machine</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%234fc3f7' stroke-width='2'/%3E%3Cpath d='M16 8v8l6 4' stroke='%234fc3f7' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=22">
+<script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="config.js?v=22"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="SPHEREx Time Machine home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 8v8l6 4"/></svg>
+    <span><b>SPHEREx</b> Time Machine</span>
+  </a>
+  <form id="search" class="search" role="search" autocomplete="off">
+    <label class="sr-only" for="q">Search a star, a name or coordinates</label>
+    <input id="q" list="targetNames" placeholder="Search any star or position — e.g. Teegarden's Star, 269.45 4.69, 08h55m10s −07d14m42s">
+    <datalist id="targetNames"></datalist>
+    <button type="submit" class="primary">Go</button>
+  </form>
+  <div class="tools">
+    <button id="skyBtn" class="ghost" title="Pick a place on a sky map"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg> Pick on sky map</button>
+    <button id="dlBtn" class="ghost" title="Places being built from NASA data">Downloads <span id="dlBadge" class="badge-n" hidden>0</span></button>
+    <button id="helpBtn" class="ghost" title="How to use this tool (?)">Help</button>
+    <button id="aboutBtn" class="ghost" title="Data sources and credits">About</button>
+    <button id="themeBtn" class="ghost icon" title="Switch light / dark theme" aria-label="Switch light or dark theme">◐</button>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="panel targets" aria-label="Targets">
+    <div id="targetGroups"></div>
+    <p class="fine">Not in the list? Search any name or coordinates above, or pick a place on the sky map — the time series is built for you from NASA data.</p>
+  </aside>
+
+  <section class="stage" aria-label="Time machine">
+    <div class="stage-head">
+      <div class="title">
+        <div class="eyebrow" id="kindLabel">—</div>
+        <h1 id="targetName">Loading…</h1>
+        <p class="lookfor" id="lookFor"></p>
+      </div>
+      <div class="head-controls">
+        <div class="seg small" id="span" role="group" aria-label="Time span">
+          <button data-span="all" title="Include 2MASS (≈2000) and WISE (2010)">Since 2000</button>
+          <button data-span="spherex" title="Only SPHEREx (2025–2026)">SPHEREx only</button>
+        </div>
+        <div class="detectors" id="detectors" role="group" aria-label="SPHEREx detector (infrared colour)"></div>
+      </div>
+    </div>
+
+    <div class="viewer" id="viewer">
+      <canvas id="canvas" tabindex="0" aria-label="Sky image. Drag to pan, scroll to zoom, arrow keys step through dates."></canvas>
+      <div class="hud hud-tl" id="hudFrame"></div>
+      <div class="hud hud-tr" id="hudMode"></div>
+      <div class="hud hud-bl"><span id="scaleBar" class="scalebar"><i></i><span></span></span></div>
+      <div class="hud hud-br" id="cursor">RA — Dec —</div>
+      <svg class="compass" viewBox="0 0 40 40" aria-label="North up, east left"><path d="M20 30V8M20 8l-4 6M20 8l4 6M30 30H10"/><text x="20" y="6">N</text><text x="5" y="33">E</text></svg>
+      <div class="zoom">
+        <button id="zoomIn" aria-label="Zoom in" title="Zoom in (+)">+</button>
+        <button id="zoomOut" aria-label="Zoom out" title="Zoom out (−)">−</button>
+        <button id="zoomFit" aria-label="Show whole field" title="Show whole field (0)">⤢</button>
+        <button id="zoomTarget" aria-label="Zoom to target" title="Zoom to target (T)">⌖</button>
+      </div>
+      <div class="status" id="status" role="status"></div>
+      <div class="loadcard" id="loadCard" hidden>
+        <div class="lc-head"><b id="lcTitle">Loading more data…</b><button id="lcToggle" class="ghost" aria-label="Show or hide details">▾</button></div>
+        <div class="bar"><i id="lcBar"></i></div>
+        <p class="fine" id="lcSub"></p>
+        <ul id="lcList"></ul>
+      </div>
+      <div class="build" id="buildPanel" hidden>
+        <h3 id="buildTitle">Building time series…</h3>
+        <p class="fine" id="buildSub">Fetching SPHEREx, 2MASS and WISE images from NASA/IPAC IRSA. A new place takes about 1–3 minutes; afterwards it opens instantly for everyone.</p>
+        <div class="bar"><i id="buildBar"></i></div>
+        <ul id="buildLog"></ul>
+        <button id="buildCancel" class="ghost">Hide</button>
+      </div>
+    </div>
+
+    <div class="controls" aria-label="Playback and display">
+      <div class="transport">
+        <button id="prev" aria-label="Previous date" title="Previous date (←)">◀</button>
+        <button id="playBtn" class="primary play" aria-label="Play" title="Play / pause (Space)">▶</button>
+        <button id="next" aria-label="Next date" title="Next date (→)">▶|</button>
+        <label class="speed" title="Frames per second">Speed <input id="speed" type="range" min="0.5" max="6" step="0.5" value="1.5"><output id="speedOut">1.5/s</output></label>
+      </div>
+      <div class="seg" id="modes" role="group" aria-label="View mode">
+        <button data-mode="play" class="active" title="Step through every date (P)">Movie</button>
+        <button data-mode="blink" title="Flip between A and B (B)">Blink A↔B</button>
+        <button data-mode="swipe" title="Drag a divider between A and B (S)">Swipe A|B</button>
+        <button data-mode="diff" title="Show what changed between A and B (D)">Difference</button>
+      </div>
+      <div class="display">
+        <label title="Brightness">☀ <input id="bright" type="range" min="-0.4" max="0.4" step="0.02" value="0" aria-label="Brightness"></label>
+        <label title="Contrast">◑ <input id="contrast" type="range" min="0.4" max="2.5" step="0.05" value="1" aria-label="Contrast"></label>
+        <select id="cmap" aria-label="Colour map" title="Colour map">
+          <option value="gray">Grey</option><option value="invert">Inverted</option><option value="heat">Heat</option><option value="ice">Ice</option>
+        </select>
+        <label class="chk" title="Show pixels as sharp squares instead of smoothed"><input type="checkbox" id="sharp"> Sharp pixels</label>
+        <details class="more">
+          <summary>Markers</summary>
+          <div class="more-body">
+            <label class="chk"><input type="checkbox" id="showLabel" checked> Name label</label>
+            <label class="chk"><input type="checkbox" id="showPred" checked> Predicted position ○</label>
+            <label class="chk"><input type="checkbox" id="showMeas" checked> Measured position +</label>
+            <label class="chk"><input type="checkbox" id="showTrack" checked> Path over time</label>
+            <label class="chk"><input type="checkbox" id="showFlags"> Bad pixels (SPHEREx flags)</label>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="timeline" aria-label="Timeline">
+      <div class="timeline-head">
+        <span class="tl-title">Timeline <span class="hint">— drag along the bar, or click a date</span></span>
+        <span class="ab">
+          <button id="setA" class="chip a" title="Use the current date as A">Set A</button><span id="aLabel">—</span>
+          <button id="setB" class="chip b" title="Use the current date as B">Set B</button><span id="bLabel">—</span>
+        </span>
+      </div>
+      <svg id="timeline" role="slider" tabindex="0" aria-label="Date" aria-valuemin="1" aria-valuemax="1" aria-valuenow="1"></svg>
+    </div>
+  </section>
+
+  <aside class="panel info" aria-label="Details">
+    <h2 class="panel-title">What changes?</h2>
+    <div id="motion" class="motion"></div>
+    <div id="future" class="future" hidden>
+      <label for="futureYear">Where will it be in <output id="futureOut">2050</output>?</label>
+      <input id="futureYear" type="range" min="2026" max="2100" step="1" value="2050">
+      <p class="fine" id="futureText"></p>
+    </div>
+    <h2 class="panel-title">This image</h2>
+    <dl class="kv" id="frameInfo"></dl>
+    <h2 class="panel-title">About</h2>
+    <p id="blurb" class="blurb"></p>
+    <details class="sources"><summary>Original NASA files (<span id="srcCount">0</span>)</summary><ul id="sources"></ul></details>
+    <details class="sources"><summary>How the images were made</summary><p id="processing" class="fine"></p></details>
+    <button id="shareBtn" class="share">Copy link to this view</button>
+  </aside>
+</main>
+
+<dialog id="skyDlg" class="sky-dlg" aria-labelledby="skyTitle">
+  <button class="close" data-close aria-label="Close">×</button>
+  <h2 id="skyTitle">Pick a place on the sky</h2>
+  <p class="fine">Drag to move, scroll to zoom, <b>click a point</b> to choose it. Orange circles are ready-made targets. This map is one picture (all dates combined) — the time machine then shows the changes.</p>
+  <div class="sky-bar">
+    <label>Map <select id="survey"></select></label>
+    <span id="skyPick" class="fine">No point chosen yet.</span>
+    <button id="skyBuild" class="primary" disabled>Open time series here</button>
+  </div>
+  <div class="sky-map"><div id="aladin"></div><div class="status" id="skyStatus" role="status"></div>
+    <div class="tilebar" id="tileBar" hidden role="progressbar" aria-label="Map loading progress"><span id="tileText">Loading map…</span><div class="bar"><i id="tileFill"></i></div></div>
+  </div>
+</dialog>
+
+<dialog id="dlDlg" class="dl-dlg" aria-labelledby="dlTitle">
+  <button class="close" data-close aria-label="Close">×</button>
+  <h2 id="dlTitle">Downloads</h2>
+  <p class="fine" id="dlNote">Places built from NASA data on request. Ready-made targets are already included and need no download.</p>
+  <ul id="dlList" class="dl-list"></ul>
+</dialog>
+
+<dialog id="helpDlg" aria-labelledby="helpTitle">
+  <button class="close" data-close aria-label="Close">×</button>
+  <h2 id="helpTitle">How to use the time machine</h2>
+  <ol class="steps">
+    <li><b>Choose something</b> from the list, search any star name or coordinates, or click a place on the sky map.</li>
+    <li><b>Press ▶ or drag the timeline</b> to move through the years. Stars that are close to us slowly move; some stars change brightness; comets move within hours.</li>
+    <li><b>Compare two dates:</b> press <i>Set A</i> and <i>Set B</i> on the timeline, then choose <i>Blink</i>, <i>Swipe</i> or <i>Difference</i> (blue = brighter in A, orange = brighter in B).</li>
+    <li><b>Since 2000 / SPHEREx only:</b> SPHEREx started in 2025. Older NASA images (2MASS ≈2000, WISE 2010) show motion over 26 years.</li>
+    <li><b>D1–D6</b> are SPHEREx's six infrared detectors, from 0.75 µm (closest to red light) to 5 µm (heat). Cold brown dwarfs only show up at the long end.</li>
+  </ol>
+  <h3>Markers</h3>
+  <ul class="legend">
+    <li><span class="sw pred"></span> Predicted position — from the star's known motion (SIMBAD) or IRSA's comet ephemeris. A guide, not a detection.</li>
+    <li><span class="sw meas"></span> Measured position — where the light actually is in this image.</li>
+    <li><span class="sw track"></span> Path — where the object was and will be, year by year.</li>
+  </ul>
+  <h3>Why do stars look like blobs?</h3>
+  <p>SPHEREx maps the whole sky in 102 colours, so its pixels are large (6.2″). Stars are smaller than one pixel and appear as soft dots. Use <i>Sharp pixels</i> to see the real pixels, and Brightness/Contrast to see faint things.</p>
+  <h3>Keys</h3>
+  <p class="keys"><kbd>Space</kbd> play · <kbd>←</kbd><kbd>→</kbd> date · <kbd>A</kbd>/<kbd>Z</kbd> set A/B · <kbd>B</kbd> blink · <kbd>S</kbd> swipe · <kbd>D</kbd> difference · <kbd>P</kbd> movie · <kbd>+</kbd><kbd>−</kbd> zoom · <kbd>0</kbd> whole field · <kbd>T</kbd> target · <kbd>1</kbd>–<kbd>6</kbd> detector</p>
+</dialog>
+
+<dialog id="aboutDlg" aria-labelledby="aboutTitle">
+  <button class="close" data-close aria-label="Close">×</button>
+  <h2 id="aboutTitle">About</h2>
+  <p>An independent entry for the <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">NASA Space Apps Challenge 2026 — Planet X and SPHEREx</a>. Not an official NASA service.</p>
+  <h3>Data</h3>
+  <ul>
+    <li><b>SPHEREx</b> spectral images, Quick Releases QR2 and QR3 (2025–2026), from the <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">NASA/IPAC Infrared Science Archive (IRSA)</a>.</li>
+    <li><b>2MASS</b> (≈2000) and <b>WISE</b> (2010) images from IRSA, for the "Since 2000" view.</li>
+    <li>Star positions and motions from <b>SIMBAD</b> (CDS); comet positions from IRSA's 3I/ATLAS table.</li>
+    <li>Sky map: SPHEREx DR1, 2MASS and AllWISE maps from NASA/IPAC IRSA, shown with Aladin Lite (CDS software).</li>
+  </ul>
+  <h3>Credits</h3>
+  <p class="fine">This publication makes use of data products from the Spectro-Photometer for the History of the Universe, Epoch of Reionization and Ices Explorer (SPHEREx), which is a joint project of the Jet Propulsion Laboratory and the California Institute of Technology, and is funded by the National Aeronautics and Space Administration. This research has made use of the NASA/IPAC Infrared Science Archive, which is funded by the National Aeronautics and Space Administration and operated by the California Institute of Technology.</p>
+  <p class="fine">This publication makes use of data products from the Two Micron All Sky Survey, a joint project of the University of Massachusetts and IPAC/Caltech, funded by NASA and the NSF, and from the Wide-field Infrared Survey Explorer, a joint project of UCLA and JPL/Caltech, funded by NASA. This research has made use of the SIMBAD database and Aladin Lite, CDS, Strasbourg, France.</p>
+  <h3>Limits</h3>
+  <p class="fine">Predicted positions are guides, not detections. SPHEREx's wavelength changes across its detectors; compare brightness only between images with similar wavelength (shown for every image). 2MASS and WISE use other wavelengths and units, so compare their positions, not their brightness.</p>
+</dialog>
+
+<script src="app.js?v=22"></script>
+</body>
+</html>
