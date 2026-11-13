@@ -50,7 +50,16 @@ Other SPHEREx collections that exist at IRSA: `spherex_qr2_cal`, `spherex_qr3_ca
 - IRSA cutout: append `?center=<ra>,<dec>&size=<deg>` to the IBE FITS URL (tested OK; ~5 MB for 0.1°, all extensions)
 - CDS MocServer (list HiPS): `https://alasky.cds.unistra.fr/MocServer/query?ID=<pattern>&get=id`
 - SPHEREx mission page at IRSA: https://irsa.ipac.caltech.edu/Missions/spherex.html
-- Challenge page: https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/ (Resources tab opens 2026-11-13 — recheck)
+- Challenge page: https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/
+
+## Challenge Resources tab (published 2026-11-13)
+| Resource | Status in this project |
+|---|---|
+| NASA/IPAC IRSA — SPHEREx resources | ✅ main data source |
+| SPHEREx Tutorial Notebooks (caltech-ipac.github.io/irsa-tutorials/spherex/) | reference only — same access methods as the pipeline |
+| WiseView (byw.tools/wiseview) — WISE flip-book tool, model/inspiration | not a data source; our tool is the SPHEREx equivalent (+ deep time) |
+| Gaia DR3 via MAST (archive.stsci.edu) | not used yet — optional overlay / proper motions (brief also suggests Gaia overlays) |
+| CSA NEOSSat, CADC (Canadian Space Agency) | not used — not SPHEREx, not NASA |
 
 ## SPHEREx file facts the pipeline relies on (checked 2026-11-12)
 - SIA `access_url` for `spherex_qr2`/`qr3` is the **direct FITS URL** (IBE). Rows also carry `cloud_access` (AWS S3 bucket `nasa-irsa-spherex`). The 3I/ATLAS table's `access_url` is a **datalink** URL; resolve `#this`.

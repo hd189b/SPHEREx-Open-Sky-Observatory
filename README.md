@@ -12,6 +12,48 @@ Entry for the **[NASA Space Apps Challenge 2026 — *Planet X and SPHEREx*](http
 
 ---
 
+## ⚠️ About the live demo: search needs the Python builder
+
+**Live demo:** https://hd189b.space/SPHEREx-Open-Sky-Observatory/
+
+The live demo runs on **GitHub Pages, which only hosts static websites** (HTML, CSS, JavaScript). It cannot run Python. So on the live demo:
+
+- ✅ **Works:** the eight ready-made targets (Barnard's Star, Epsilon Indi B, WISE 0855, RW Aurigae, R Draconis, Proxima Centauri, Kapteyn's Star, comet 3I/ATLAS) — play, compare, measure, all features.
+- ❌ **Does not work:** **searching a new star or coordinates** and **"Open time series here"** on the sky map. Building a new time series means downloading SPHEREx images from NASA and processing them in **Python** (cleaning, aligning, stacking, measuring) — this needs the **live builder server**, which GitHub Pages cannot run.
+
+**To use search, host it yourself** — either on your own computer or for free on Hugging Face Spaces:
+
+**Option A — your own computer (5 minutes, needs git and Python 3.11+):**
+```sh
+git clone https://github.com/hd189b/SPHEREx-Open-Sky-Observatory.git
+cd SPHEREx-Open-Sky-Observatory
+python3 -m venv pipeline/.venv
+pipeline/.venv/bin/pip install -r server/requirements.txt
+python3 -m http.server 8080 --directory dist              # terminal 1: the website
+pipeline/.venv/bin/uvicorn server.app:app --port 7860     # terminal 2: the live builder
+```
+Open **http://localhost:8080** — search now works (the site finds the builder on port 7860 automatically).
+
+**Option B — online, free (Hugging Face Spaces + GitHub Pages):**
+1. On https://huggingface.co create a **New Space** → SDK **Docker** → template **Blank** → hardware **CPU basic (free)**, named e.g. `spherex-tm`.
+2. From this repository's folder:
+   ```sh
+   git clone https://huggingface.co/spaces/<your-user>/spherex-tm ../spherex-tm
+   sh server/prepare_space.sh ../spherex-tm
+   cd ../spherex-tm && git add -A && git commit -m "Deploy builder" && git push
+   ```
+   (`git push` asks for your Hugging Face user name and an access token with **write** permission.)
+3. When the Space shows **Running**, check `https://<your-user>-spherex-tm.hf.space/api/health` → `{"ok": true, …}`.
+4. Fork this repository, put the Space address in `dist/config.js`:
+   ```js
+   window.TM_API = 'https://<your-user>-spherex-tm.hf.space';
+   ```
+   then commit, push, and turn on **Settings → Pages → Source: GitHub Actions**. Your copy of the site now searches anything.
+
+More details: [server/README.md](server/README.md) and the "Run a new instance" and "Host it" sections below.
+
+---
+
 ## Data used
 
 ### NASA data (all images)

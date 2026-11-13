@@ -6,7 +6,7 @@ Update this file after every task. Plan and reasons: [PLAN.md](PLAN.md). Data fa
 **Current phase:** Option C done (prepared list + live builder) → record the 240-second demo video, then deploy the server
 **Next task:** Deploy `server/` to Hugging Face Spaces and set `dist/config.js` (needs the user's account); then P3 leftovers (light curves P4.3).
 **Demo set (kept small to limit downloads, 2026-11-12):** 5 challenge targets + Proxima Centauri + Kapteyn's Star + 3I/ATLAS. Live builder fetches only D2 + D5, 1 image per period (≈10–20 cutouts).
-**Waiting on:** challenge Resources tab (published 2026-11-13) — user will share new data.
+**Resources tab checked (2026-11-13):** nothing required changes; optional: Gaia DR3 overlay (see DATA_SOURCES.md).
 
 ---
 
